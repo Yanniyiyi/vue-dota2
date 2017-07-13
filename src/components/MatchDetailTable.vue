@@ -127,7 +127,7 @@
 import ItemTooltip from './ItemTooltip'
 export default {
   name: 'matchdetailtable',
-  props:['isRadiant'],
+  props:['players'],
   components:{
     'ItemTooltip': ItemTooltip
   },
@@ -139,9 +139,9 @@ export default {
       }
   },
   computed:{
-    players(){
-      return this.isRadiant ? this.$store.state.radiantPlayers : this.$store.state.direPlayers
-    }
+    // players(){
+    //   return this.isRadiant ? this.$store.state.matchCache[this.matchId].radiantPlayers : this.$store.state.matchCache[this.matchId].direPlayers
+    // }
   },
   methods:{
     getHeroImgById(heroId){

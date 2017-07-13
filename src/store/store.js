@@ -10,6 +10,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state:{
+		matchCache:{},
 		heroes:heroes,
 		items: items,
 		itemids: itemids,
@@ -46,6 +47,14 @@ export default new Vuex.Store({
 		},
 		SET_EXPANDED_MATCH_ID(state,matchId){
 			state.expandedMatchId = matchId;
+		},
+		UPDATE_MATCH_CACHE(state,payload){
+			if(!state.matchCache[payload.matchId]){
+				state.matchCache[payload.matchId] = {};
+				state.matchCache[payload.matchId].radiantPlayers = payload.radiantPlayers;
+				state.matchCache[payload.matchId].direPlayers = payload.direPlayers;
+				state.matchCache[payload.matchId].matchSummary = payload.matchSummary;
+			}
 		}
 	},
 	actions:{
@@ -69,8 +78,8 @@ export default new Vuex.Store({
 		setDirePlayers(context, players){
 			context.commit('SET_DIRE_PLAYERS',players);
 		},
-		setExpandedMatchId(context,matchId){
-			context.commit('SET_EXPANDED_MATCH_ID',matchId);
+		updateMatchCache(context,payload){
+			context.commit('UPDATE_MATCH_CACHE',payload);
 		}
 	}
 })
