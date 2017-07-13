@@ -42,7 +42,9 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
+          name: utils.assetsPath('img/[name].[hash:7].[ext]'),
+          // the publicPath line is added for github demo purpose.
+          publicPath: process.env.NODE_ENV === 'production' ? '../../' : '/'
         }
       },
       {
