@@ -58,6 +58,7 @@
      <el-table-column
       label="KILLS"
       prop="kills"
+      width="100"
       sortable
      >
      
@@ -65,6 +66,7 @@
      <el-table-column
       label="DEATHS"
       prop="deaths"
+      width="120"
       sortable
      >
      
@@ -72,6 +74,7 @@
      <el-table-column
       label="ASSISTS"
       prop="assists"
+      width="120"
       sortable
      >
      

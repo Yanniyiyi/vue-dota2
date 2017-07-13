@@ -26,6 +26,9 @@
         label="Last match time"
         sortable
         >
+        <template scope="scope">
+          {{ scope.row.last_match_time ? (scope.row.last_match_time).slice(0,-5).replace(/T|Z/g,' ') : ''}}
+        </template>
       </el-table-column>
       <el-table-column>
       <template scope="scope">
