@@ -1,13 +1,21 @@
 <template>
   <div class="component-container">
+    <div class="block" v-if="searchResult.length > pageSize">
+    <el-pagination
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
+    </div>
     <el-table
       id= "result-table"
-      :data="searchResult"
+      :data="tableData"
       border
       v-loading="loading"
       element-loading-text="Loading...."
       style="width: 100%"
-      :default-sort = "{prop: 'date', order: 'descending'}"
+      
       >
       <el-table-column
         prop="personaname"
@@ -15,8 +23,8 @@
         sortable
        >
         <template scope="scope">
-          <div class="wrapper">
-             <img :src="scope.row.avatarfull" alt="">
+          <div class="search-result-wrapper">
+             <img v-lazy="scope.row.avatarfull" alt="" >
              <span style="margin-left: 10px">{{ scope.row.personaname }}</span>
           </div>
         </template>
@@ -33,7 +41,7 @@
       <el-table-column>
       <template scope="scope">
         <el-button
-          @click.native.prevent="viewUserProfile(scope.$index, searchResult)"
+          @click.native.prevent="viewUserProfile(scope.$index, tableData)"
           type="text"
           size="small">
           View
@@ -41,6 +49,14 @@
       </template>
     </el-table-column>
     </el-table>
+ <div class="block" v-if="searchResult.length > pageSize">
+    <el-pagination
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -55,11 +71,24 @@ export default {
   },
   data(){
     return {
+      currentPage: 1,
       searchResult:[],
-      loading:false
+      sortedResult:[],
+      loading:false,
+      total:0,
+      pageSize:15
     }
   },
   computed:{
+    tableData(){
+      return this.searchResult.slice(this.startIndex,this.endIndex);
+    },  
+    startIndex(){
+      return (this.currentPage - 1) * this.pageSize; 
+    },
+    endIndex(){
+      return this.startIndex + this.pageSize;
+    },
     keyword(){
       return this.$store.state.searchKeyWord;
     }
@@ -70,6 +99,8 @@ export default {
       if(this.keyword){
          this.$axios.get('https://api.opendota.com/api/search?q='+this.$store.state.searchKeyWord).then((response) => {
           this.searchResult = response.data;
+          // this.sortedResult = this.searchResult
+          this.total = this.searchResult.length;
           this.loading = false;
         });
       }
@@ -77,7 +108,24 @@ export default {
     viewUserProfile(index, result){
       this.$store.dispatch('setPlayerId',result[index].account_id);
       this.$router.push('PlayerProfile');
-    }
+    },
+    // handleSortChange({column, prop, order}){
+    //   if(column && prop && order){
+    //     this.sortedResult = this.searchResult;
+    //   }
+    //   this.sortedResult.sort(this.createCompareMethod(prop,order));
+    // },
+    // createCompareMethod(prop,order){
+    //   if(order === "descending"){
+    //     return function(a,b){
+    //       b[prop] - a[prop];
+    //     };
+    //   }else{
+    //     return function(a,b){
+    //       a[prop] - b[prop];
+    //     };
+    //   }
+    // }
   }
 }
 </script>
@@ -87,11 +135,11 @@ export default {
   #result-table{
     text-align: left;
   }
-  .wrapper{
+  .search-result-wrapper{
     display: flex;
     align-items: center;
   }
-  img{
+  .search-result-wrapper img{
     height: 29px;
     box-shadow: 0 0 5px rgba(0, 0, 0, .4);
     margin-left:0 auto;

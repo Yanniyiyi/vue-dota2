@@ -3,12 +3,21 @@
     <el-row>
       <el-col :span="24">
         <div><h3><i class="el-icon-caret-right"></i> In All Matches</h3></div>
-        <div class="summary-data" v-for="(item, key) in totals">
-        <span>{{ key.toUpperCase().replace(/_/g,' ') }}</span>
-        <span class="success">{{ item }}</span>
-      </div>
+        <div class="summary-data" v-for="(item, key) in totals" v-if="allMatchAttrs.indexOf(key) > -1">
+              <span>{{ key.toUpperCase().replace(/_/g,' ') }}</span>
+              <span class="success">{{ item }}</span>
+        </div>
       </el-col>
     </el-row>
+    <el-row>
+      <el-col :span="24">
+        <div><h3><i class="el-icon-caret-right"></i> In Parsed Matches</h3></div>
+        <div class="summary-data" v-for="(item, key) in totals" v-if="parsedMatchAttrs.indexOf(key) > -1">
+              <span>{{ key.toUpperCase().replace(/_/g,' ') }}</span>
+              <span class="success">{{ item }}</span>
+         </div>
+      </el-col>
+    </el-row>  
   </div>
 </template>
 
@@ -19,13 +28,21 @@ export default {
     },
     data() {
       return {
-        attrs:[
+        allMatchAttrs:[
           'kills','deaths','assists','last_hits','denies','duration','level',
-          'hero_damage','tower_damage','hero_healing','stuns','tower_kills','neutral_kills',
+          'hero_damage','tower_damage','hero_healing'
+        ],
+        parsedMatchAttrs:[
+          'stuns','tower_kills','neutral_kills',
           'courier_kills','purchase_tpscroll','purchase_ward_observer','purchase_ward_sentry',
           'purchase_gem','purchase_rapier','pings'
         ],
         totals: null,
+      }
+    },
+    computed:{
+      attrs(){
+        return this.allMatchAttrs.concat(this.parsedMatchAttrs);
       }
     },
     methods:{

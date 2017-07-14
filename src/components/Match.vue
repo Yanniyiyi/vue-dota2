@@ -77,7 +77,8 @@ export default {
               matchData.players = this.formatPlayersInfo(matchData.players);
               this.radiantPlayers = this.getRadiantPlayers(matchData.players);
               this.direPlayers = this.getDirePlayers(matchData.players);
-              this.matchSummary = this.getMatchSummary(matchData);
+              // this.matchSummary = this.getMatchSummary(matchData);
+              this.matchSummary = matchData;
               this.updateMatchCache(this.matchId,this.matchSummary,this.radiantPlayers,this.direPlayers);
           });
         }else{
@@ -106,14 +107,14 @@ export default {
       getDirePlayers(players){
         return players.slice(5);
       },
-      getMatchSummary(matchData){
-        return {
-                radiant_win: matchData.radiant_win,
-                radiant_score:matchData.radiant_score,
-                dire_score:matchData.dire_score,
-                duration:matchData.duration
-        };
-      },
+      // getMatchSummary(matchData){
+      //   return {
+      //           radiant_win: matchData.radiant_win,
+      //           radiant_score:matchData.radiant_score,
+      //           dire_score:matchData.dire_score,
+      //           duration:matchData.duration
+      //   };
+      // },
       generatePayload(matchId,matchSummary,radiantPlayers,direPlayers){
         return {
           matchId: matchId,

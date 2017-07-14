@@ -59,8 +59,9 @@
         <el-tab-pane label="Overview" name="first">
           <Overview></Overview>
         </el-tab-pane>
-        <el-tab-pane label="Matches" name="second">Matches</el-tab-pane>
-        <el-tab-pane label="Heros" name="third">Heros</el-tab-pane>
+        <el-tab-pane label="Heros" name="third">
+          <Heroes></Heroes>
+        </el-tab-pane>
         <el-tab-pane label="Totals" name="fourth">
           <Totals></Totals>
         </el-tab-pane>
@@ -74,12 +75,14 @@
 <script>
 import Overview from './Overview'
 import Totals from './Totals'
+import Heroes from './Heroes'
 
 export default {
   name: 'home',
   components:{
     'Overview':Overview,
-    'Totals':Totals
+    'Totals':Totals,
+    'Heroes':Heroes
   },
   created(){
     this.getPlayerProfile();

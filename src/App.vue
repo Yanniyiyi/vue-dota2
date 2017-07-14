@@ -49,4 +49,6 @@ a, a:hover, a:visited{
 .component-container{
   padding:1rem;
 }
+
+  
 </style>
