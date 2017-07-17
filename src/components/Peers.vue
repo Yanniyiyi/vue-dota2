@@ -136,7 +136,11 @@ export default {
     }
   },
   methods:{
+    resetDataCache(){
+      this.dataCache = {};
+    },
     getPeersData(){
+      this.resetDataCache();
       this.$axios.get('https://api.opendota.com/api/players/' + this.accountId  + '/peers').then( (response) => {
           response.data.forEach((data) => {
             this.calculateWinRate(data);
