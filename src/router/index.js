@@ -4,9 +4,9 @@ import Home from '@/components/Home'
 import SearchResult from '@/components/SearchResult'
 import PlayerProfile from '@/components/PlayerProfile'
 
-Vue.use(Router)
+Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -24,4 +24,10 @@ export default new Router({
       component: PlayerProfile,
     },
   ]
+});
+router.beforeEach(function (to, from, next) {
+  window.scrollTo(0, 0)
+  next();
 })
+
+export default router;

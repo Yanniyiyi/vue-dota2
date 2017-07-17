@@ -5,7 +5,7 @@
     style="width: 100%">
     <el-table-column type="expand" >
       <template scope="scope">
-        <div style="background-color:#272839">
+        <div style="background-color:#272839">        
            <Match :match-id="scope.row.match_id"></Match> 
         </div>
       </template>

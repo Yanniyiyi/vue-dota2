@@ -26,6 +26,9 @@ export default {
     created(){
       this.getTotals();
     },
+    watch:{
+    '$route':'getTotals'
+    },
     data() {
       return {
         allMatchAttrs:[
@@ -43,11 +46,14 @@ export default {
     computed:{
       attrs(){
         return this.allMatchAttrs.concat(this.parsedMatchAttrs);
+      },
+      accountId(){
+        return this.$route.params.accountId;
       }
     },
     methods:{
       getTotals(){
-        this.$axios.get('https://api.opendota.com/api/players/' + this.$store.state.playerId + '/totals').then((response) => {
+        this.$axios.get('https://api.opendota.com/api/players/' + this.accountId + '/totals').then((response) => {
             this.totals = this.formatTotalsData(response.data);
         });
       },

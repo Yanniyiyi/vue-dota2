@@ -59,13 +59,24 @@
   <el-col :span="24">
       <el-tabs value="first">
         <el-tab-pane label="Overview" name="first">
-          <Overview></Overview>
+          <keep-alive>
+             <Overview></Overview>
+          </keep-alive> 
         </el-tab-pane>
-        <el-tab-pane label="Heros" name="third">
-          <Heroes></Heroes>
+        <el-tab-pane label="Heros" name="second">
+          <keep-alive>
+             <Heroes></Heroes>
+          </keep-alive>
         </el-tab-pane>
-        <el-tab-pane label="Totals" name="fourth">
-          <Totals></Totals>
+        <el-tab-pane label="Totals" name="third">
+          <keep-alive>
+             <Totals></Totals>
+          </keep-alive>
+        </el-tab-pane>
+        <el-tab-pane label="Peers" name="fourth">
+          <keep-alive>
+             <Peers></Peers>
+          </keep-alive>
         </el-tab-pane>
       </el-tabs>
   </el-col>
@@ -80,16 +91,21 @@
 import Overview from './Overview'
 import Totals from './Totals'
 import Heroes from './Heroes'
+import Peers from './Peers'
 
 export default {
-  name: 'home',
+  name: 'PlayerProfile',
   components:{
     'Overview':Overview,
     'Totals':Totals,
-    'Heroes':Heroes
+    'Heroes':Heroes,
+    'Peers':Peers
   },
   created(){
     this.getPlayerProfile();
+  },
+  watch:{
+    '$route':'getPlayerProfile'
   },
   data () {
     return {
@@ -158,6 +174,7 @@ export default {
       return ((this.playerWL.win / this.totalMatches) * 100).toFixed(2) + "%";
     },
     averageInfo(){
+      this.resetHighestInfo();
       let totalAssists = 0;
       let totalKills = 0;
       let totalDeaths = 0;
@@ -246,6 +263,47 @@ export default {
     },
   },
   methods:{
+    resetHighestInfo(){
+      this.highestInfo = null;
+      this.highestInfo = {
+          assists: {
+            number: 0,
+            hero: ''
+          },
+          kills: {
+            number: 0,
+            hero: ''
+          },
+          deaths:{
+            number: 0,
+            hero: ''
+          },
+          gpm:{
+            number: 0,
+            hero: ''
+          },
+          xpm:{
+            number: 0,
+            hero: ''
+          },
+          lh:{
+            number: 0,
+            hero: ''
+          },
+          hd:{
+            number: 0,
+            hero: ''
+          },
+          hh:{
+            number: 0,
+            hero: ''
+          },
+          td:{
+            number: 0,
+            hero: ''
+          }
+        }
+    },
     getPlayerAccount(){
       return this.$axios.get('https://api.opendota.com/api/players/' + this.accountId);
     },
@@ -325,13 +383,21 @@ export default {
       return name ? name : this.laneName[0];
     },
     getPlayerProfile(){
-      this.$axios.all([this.getPlayerAccount(), this.getPlayerWinLose(), this.getRecentMatches()]).then(this.$axios.spread(
-        (accountResponse, wlResponse, recentMatchesResponse) =>{
+      this.dispatchPlayerId(this.accountId);
+      this.$axios.all([this.getPlayerAccount(), this.getPlayerWinLose(),
+       this.getRecentMatches()]).then(this.$axios.spread(
+        (accountResponse, wlResponse, recentMatchesResponse, peersDataResponse) =>{
+
           this.playerAccount = accountResponse.data;
+
           this.playerWL = wlResponse.data;
+
           this.recentMatches = this.formatMatchesData(recentMatchesResponse.data);
+
           this.dispatchRecentMatchesData(this.recentMatches);
-          this.dispatchPlayerId(this.accountId);
+
+
+
           this.fullscreenLoading = false;
         }));
     },

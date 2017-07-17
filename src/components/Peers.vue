@@ -1,5 +1,5 @@
 <template>
-<div class="component-container">
+  <div class="component-container">
     <div class="block" v-if="total > pageSize">
     <el-pagination
       :current-page.sync="currentPage"
@@ -19,15 +19,16 @@
       >
       <el-table-column
         prop="personaname"
-        label="Hero"
+        label="PLAYER"
         sortable="custom"
         width="250"
        >
         <template scope="scope">
           <div class="wrapper" style=" display: flex;
     align-items: center;">
-             <img v-lazy="scope.row.hero_img" alt="" style="width:40%" >
-             <span style="margin-left: 10px">{{ scope.row.hero_name }}</span>
+             <img v-lazy="scope.row.avatar" alt="" style="height:29px; box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+    margin-left:0 auto;" >
+    <a  @click.prevent="viewUser(scope.row.account_id)" style="margin-left: 10px; color:#6BF; text-decoration:none"> {{ scope.row.personaname }}</a>
           </div>
         </template>
       </el-table-column>
@@ -37,15 +38,6 @@
         sortable="custom"
         width="100"
         >
-      </el-table-column>
-      <el-table-column
-        prop="win_rate"
-        label="Win Rate"
-        sortable="custom"
-        >
-         <template scope="scope">
-             <span style="margin-left: 10px">{{ scope.row.win_rate + '%' }}</span>
-        </template>
       </el-table-column>
        <el-table-column
         prop="with_games"
@@ -78,6 +70,24 @@
              <span style="margin-left: 10px">{{ scope.row.against_win_rate + '%'  }}</span>
         </template>
       </el-table-column>
+     <!--  <el-table-column
+        prop="against_win_rate"
+        label="Against Win Rate"
+        sortable="custom"
+        >
+        <template scope="scope">
+             <span style="margin-left: 10px">{{ scope.row.against_win_rate + '%'  }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="against_win_rate"
+        label="Against Win Rate"
+        sortable="custom"
+        >
+        <template scope="scope">
+             <span style="margin-left: 10px">{{ scope.row.against_win_rate + '%'  }}</span>
+        </template>
+      </el-table-column> -->
     </el-table>
     <div class="block" v-if="total > pageSize">
     <el-pagination
@@ -92,32 +102,31 @@
 
 <script>
 export default {
-  name: 'heroes',
+  name: 'Peers',
   created(){
-    this.getHeroesData();
+    this.getPeersData();
   },
-   watch:{
-    '$route':'getHeroesData'
+  watch:{
+    '$route':'getPeersData'
   },
   data () {
-    return {  
-      loading:true,
+    return {
+      loading: true,
+      peers : [],
       dataCache:{},
-      heroesData:[],
-      heroes: this.$store.state.heroes,
       pageSize: 15,
-      currentPage: 1,
+      currentPage: 1
     }
   },
   computed:{
-    total(){
-      return this.heroesData.length;
-    },
-    playerId(){
+    accountId(){
       return this.$route.params.accountId;
     },
+    total(){
+      return this.peers.length;
+    },
     tableData(){
-      return this.heroesData.slice(this.startIndex,this.endIndex);
+      return this.peers.slice(this.startIndex,this.endIndex);
     },  
     startIndex(){
       return (this.currentPage - 1) * this.pageSize; 
@@ -127,32 +136,24 @@ export default {
     }
   },
   methods:{
-    getHeroesData(){
-      this.$axios.get('https://api.opendota.com/api/players/' + this.playerId + '/heroes').then((response) => {
+    getPeersData(){
+      this.$axios.get('https://api.opendota.com/api/players/' + this.accountId  + '/peers').then( (response) => {
           response.data.forEach((data) => {
-            this.getHeroInfo(data);
             this.calculateWinRate(data);
           });
-          this.heroesData = response.data;
-          this.loading = false;
+        this.peers = response.data;
+        this.loading = false;
       });
     },
-    getHeroInfo(data){
-         let hero = this.heroes[data.hero_id];
-         data.hero_name = hero.localized_name;
-         data.hero_img = 'https://api.opendota.com' + hero.img;
-    },
     calculateWinRate(data){
-       data.win_rate = data.games == 0 ? 0 : ((data.win / data.games) * 100).toFixed(2);
        data.with_win_rate = data.with_games == 0 ? 0.00 : ((data.with_win / data.with_games) * 100) .toFixed(2);
-       data.against_win_rate = data.against_games == 0 ? (0.00).toFixed(2) : ((data.against_win / data.against_games) * 100).toFixed(2);
+        data.against_win_rate = data.against_games == 0 ? (0.00).toFixed(2) : ((data.against_win / data.against_games) * 100).toFixed(2);
     },
     handleSort( { column, prop, order }){
       if(order){
-        let dataCopy = [].concat(this.heroesData);
-        this.heroesData = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] =  dataCopy.sort(this.createSortMethod(prop, order)).slice();
+        this.peers = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] = this.peers.slice().sort(this.createSortMethod(prop, order));
       }else{
-        this.heroesData = (this.dataCache['descending']).slice();
+        this.peers = this.dataCache['descending'];
       }
     },
     createSortMethod(prop,order){
@@ -165,16 +166,15 @@ export default {
           return a[prop] - b[prop];
         };
       }
+    },
+    viewUser(accountId){
+      this.$router.push({name:'PlayerProfile', params:{'accountId': accountId}});
     }
   }
 }
 </script>
 
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wrapper{
-   
-}
-img{
-    width: 40%;
-}
-<style>
+  
+</style>
