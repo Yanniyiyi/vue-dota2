@@ -1,5 +1,7 @@
 <template>
-  <div class="component-container">
+  <div>
+  <div v-loading.body.lock="fullscreenLoading" v-if='fullscreenLoading' style="height:100%"></div>  
+  <div class="component-container" v-if='playerAccount'>
     <el-row>
       <el-col :span="4">
         <div class="avatar-container">
@@ -69,7 +71,9 @@
   </el-col>
 </el-row>
 
+</div>
   </div>
+  
 </template>
 
 <script>
@@ -97,9 +101,10 @@ export default {
           '1 vs. 1 solo mid','Ranked all pick'
         ],
         laneName:[null,'Safe','Mid','Off'],
-        playerAccount: {},
+        fullscreenLoading:true,
+        playerAccount: null,
         playerWL: {},
-        recentMatches:{},
+        recentMatches:[],
         highestInfo: {
           assists: {
             number: 0,
@@ -142,6 +147,9 @@ export default {
     }
   },
   computed:{
+    accountId(){
+      return this.$route.params.accountId;
+    },
     totalMatches(){
       return this.playerWL.win + this.playerWL.lose;
     },
@@ -238,13 +246,13 @@ export default {
   },
   methods:{
     getPlayerAccount(){
-      return this.$axios.get('https://api.opendota.com/api/players/' + this.$store.state.playerId);
+      return this.$axios.get('https://api.opendota.com/api/players/' + this.accountId);
     },
     getPlayerWinLose(){
-      return this.$axios.get('https://api.opendota.com/api/players/' + this.$store.state.playerId + '/wl');
+      return this.$axios.get('https://api.opendota.com/api/players/' + this.accountId + '/wl');
     },
     getRecentMatches(){
-      return this.$axios.get('https://api.opendota.com/api/players/' + this.$store.state.playerId + '/recentMatches')
+      return this.$axios.get('https://api.opendota.com/api/players/' + this.accountId + '/recentMatches')
     },
     formatMatchesData(matches){  
        matches.forEach((match) => {
@@ -328,10 +336,15 @@ export default {
           this.playerWL = wlResponse.data;
           this.recentMatches = this.formatMatchesData(recentMatchesResponse.data);
           this.dispatchRecentMatchesData(this.recentMatches);
+          this.dispatchPlayerId(this.accountId);
+          this.fullscreenLoading = false;
         }));
     },
     dispatchRecentMatchesData(data){
         this.$store.dispatch('setRecentMatechesData',data);
+    },
+    dispatchPlayerId(accountId){
+        this.$store.dispatch('setPlayerId',accountId);
     }
   }
 }

@@ -90,14 +90,15 @@ export default {
       return this.startIndex + this.pageSize;
     },
     keyword(){
-      return this.$store.state.searchKeyWord;
+      return this.$route.params.keyword;
     }
   },
   methods:{
     search(){
       this.loading = true;
+      this.$store.dispatch('setSearchKeyWord',this.keyword);
       if(this.keyword){
-         this.$axios.get('https://api.opendota.com/api/search?q='+this.$store.state.searchKeyWord).then((response) => {
+         this.$axios.get('https://api.opendota.com/api/search?q='+this.keyword).then((response) => {
           this.searchResult = response.data;
           // this.sortedResult = this.searchResult
           this.total = this.searchResult.length;
@@ -107,7 +108,7 @@ export default {
     },
     viewUserProfile(index, result){
       this.$store.dispatch('setPlayerId',result[index].account_id);
-      this.$router.push('PlayerProfile');
+      this.$router.push({name:'PlayerProfile', params:{'accountId': result[index].account_id}});
     },
     // handleSortChange({column, prop, order}){
     //   if(column && prop && order){

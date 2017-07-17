@@ -14,12 +14,12 @@ export default new Router({
       component: Home,
     },
     {
-      path: '/searchresult',
-      name: 'SearchResult',
+      path: '/search/:keyword',
+      name: 'Search',
       component: SearchResult,
     },
     {
-      path: '/playerprofile',
+      path: '/playerprofile/:accountId',
       name: 'PlayerProfile',
       component: PlayerProfile,
     },
