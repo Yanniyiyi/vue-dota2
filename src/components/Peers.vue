@@ -48,10 +48,11 @@
       </el-table-column>
        <el-table-column
         label="With Win Rate"
+         prop="with_win_rate"
         sortable="custom"
         >
         <template scope="scope">
-             <span style="margin-left: 10px">{{ scope.row.with_win_rate + '%' }}</span>
+             <span style="margin-left: 10px">{{ scope.row.with_win_rate}}%</span>
         </template>
       </el-table-column>
        <el-table-column
@@ -67,7 +68,7 @@
         sortable="custom"
         >
         <template scope="scope">
-             <span style="margin-left: 10px">{{ scope.row.against_win_rate + '%'  }}</span>
+             <span style="margin-left: 10px">{{ scope.row.against_win_rate}}%</span>
         </template>
       </el-table-column>
      <!--  <el-table-column
@@ -146,18 +147,20 @@ export default {
             this.calculateWinRate(data);
           });
         this.peers = response.data;
+        this.dataCache['default'] = response.data.slice();
         this.loading = false;
       });
     },
     calculateWinRate(data){
-       data.with_win_rate = data.with_games == 0 ? 0.00 : ((data.with_win / data.with_games) * 100) .toFixed(2);
-        data.against_win_rate = data.against_games == 0 ? (0.00).toFixed(2) : ((data.against_win / data.against_games) * 100).toFixed(2);
+       data.with_win_rate = data.with_games == 0 ? 0 : parseFloat(((data.with_win / data.with_games) * 100) .toFixed(2));
+        data.against_win_rate = data.against_games == 0 ? 0 : parseFloat(((data.against_win / data.against_games) * 100).toFixed(2));
     },
     handleSort( { column, prop, order }){
       if(order){
-        this.peers = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] = this.peers.slice().sort(this.createSortMethod(prop, order));
+        // this.peers = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] = this.peers.slice().sort(this.createSortMethod(prop, order));
+       this.peers.sort(this.createSortMethod(prop, order));
       }else{
-        this.peers = this.dataCache['descending'];
+        this.peers = this.dataCache['default'].slice();
       }
     },
     createSortMethod(prop,order){

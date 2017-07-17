@@ -134,6 +134,7 @@ export default {
             this.calculateWinRate(data);
           });
           this.heroesData = response.data;
+          this.dataCache['default'] = response.data.slice();
           this.loading = false;
       });
     },
@@ -149,10 +150,10 @@ export default {
     },
     handleSort( { column, prop, order }){
       if(order){
-        let dataCopy = [].concat(this.heroesData);
-        this.heroesData = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] =  dataCopy.sort(this.createSortMethod(prop, order)).slice();
+        // this.heroesData = this.dataCache[order] ? this.dataCache[order] : this.dataCache[order] =  this.heroesData.slice().sort(this.createSortMethod(prop, order));
+       this.heroesData.sort(this.createSortMethod(prop, order));
       }else{
-        this.heroesData = (this.dataCache['descending']).slice();
+        this.heroesData = this.dataCache['default'].slice();
       }
     },
     createSortMethod(prop,order){
