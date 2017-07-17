@@ -15,7 +15,7 @@ export default new Vuex.Store({
 		items: items,
 		itemids: itemids,
 		playerId:null,
-		searchKeyWord: '147428472',
+		searchKeyWord: '',
 		searchResult: null,
 		heroesInfo: [],
 		recentMatches:[],

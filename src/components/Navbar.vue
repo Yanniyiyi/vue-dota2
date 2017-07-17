@@ -6,7 +6,7 @@
         <el-input
           placeholder="Your dota2 player id"
           icon="search"
-          v-model="keyword"
+          v-model="search"
           :on-icon-click="setSearchKeyWord">
         </el-input>
       </el-menu-item>
@@ -17,19 +17,23 @@
 <script>
 export default {
   name: 'navbar',
-  created(){
-    this.keyword = this.$store.state.searchKeyWord;
-  },
   data(){
     return {
       activeIndex: '1',
-      keyword: ''
+      search:this.keyword
+    }
+  },
+  computed:{
+    keyword(){
+      return this.$store.state.searchKeyWord;
     }
   },
   methods:{
     setSearchKeyWord(){
-      this.$store.dispatch('setSearchKeyWord',this.keyword);
-      this.$router.push('SearchResult');
+      this.$store.dispatch('setSearchKeyWord',this.search);
+      //this.$router.push('SearchResult');
+      //{ name: 'user', params: { userId: 123 }}
+      this.$router.push({ name: 'Search', params:{keyword: this.search}});
     }
   }
 }
