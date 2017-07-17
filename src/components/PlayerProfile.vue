@@ -1,7 +1,7 @@
 <template>
   <div>
   <div v-loading.body.lock="fullscreenLoading" v-if='fullscreenLoading' style="height:100%"></div>  
-  <div class="component-container" v-if='playerAccount'>
+  <div class="component-container" v-if="playerAccount && playerWL && recentMatches">
     <el-row>
       <el-col :span="4">
         <div class="avatar-container">
@@ -101,10 +101,11 @@ export default {
           '1 vs. 1 solo mid','Ranked all pick'
         ],
         laneName:[null,'Safe','Mid','Off'],
+        heroes: this.$store.state.heroes,
         fullscreenLoading:true,
         playerAccount: null,
-        playerWL: {},
-        recentMatches:[],
+        playerWL: null,
+        recentMatches:null,
         highestInfo: {
           assists: {
             number: 0,
@@ -269,18 +270,12 @@ export default {
        return matches;
     },
     findHeroById(heroId){
-        let allHeroes = this.$store.state.heroesInfo;
-        return heroId >= 23 ? allHeroes[heroId - 2] : allHeroes[heroId - 1];
-    },
-    formatHeroNameForIcon(name){
-      let prefix = 'npc_dota_hero_';
-      return name.slice(prefix.length);
+        return this.heroes[heroId];
     },
     generateHeroIconsUrl(hero){
-      let icon_url = 'https://api.opendota.com/apps/dota2/images/heroes/';
-      let foramttedHeroname = this.formatHeroNameForIcon(hero.name);
-      return { hero_sm_icon: icon_url + foramttedHeroname + '_icon.png',
-      hero_full_icon: icon_url + foramttedHeroname + '_full.png?' }
+      let icon_url = 'https://api.opendota.com';
+      return { hero_sm_icon: icon_url + hero.icon,
+      hero_full_icon: icon_url + hero.img }
     },
     generatePlayerTeam(playerSlot){
       return playerSlot >= 128 ? 'Dire' : 'Radiant';
