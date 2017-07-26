@@ -40,7 +40,8 @@
       </el-col>
     </el-row>
     <el-row >
-    <el-col :xs="24" :sm="24" :md="24" :lg="24"><div>
+    <el-col :xs="24" :sm="24" :md="24" :lg="24" v-if="averageInfo">
+      <div>
       <div><h3><i class="el-icon-caret-right"></i> Averages/Maximums<span> in last 20 matches</span></h3></div>
       <div class="summary-data" v-for="(item, key) in highestInfo">
         <span>Average {{ key.toUpperCase() }}</span>
@@ -48,7 +49,7 @@
         <span>Highest {{ key.toUpperCase() }}</span>
         <div class="range">
            <span class="success">{{ item.number + " ( +" + (item.number - averageInfo[key]) + " )"}}</span>
-           <span><img :src="item.hero.icons.hero_sm_icon" alt=""></span>
+           <span><img :src="'https://api.opendota.com' + item.hero.icon" alt=""></span>
         </div>
        
       </div>
@@ -122,6 +123,7 @@ export default {
         playerAccount: null,
         playerWL: null,
         recentMatches:null,
+        averageInfo:null,
         highestInfo: {
           assists: {
             number: 0,
@@ -172,8 +174,10 @@ export default {
     },
     winRate(){
       return ((this.playerWL.win / this.totalMatches) * 100).toFixed(2) + "%";
-    },
-    averageInfo(){
+    }
+  },
+  methods:{
+    getAverageandHighestInfo(){
       this.resetHighestInfo();
       let totalAssists = 0;
       let totalKills = 0;
@@ -249,7 +253,7 @@ export default {
          totalGPM += gpm;
          totalHh += hh;
       });
-      return {
+      this.averageInfo = {
         assists : Math.round(totalAssists/20),
         kills: Math.round(totalKills/20),
         deaths: Math.round(totalDeaths/20),
@@ -261,8 +265,6 @@ export default {
         hh : Math.round(totalHh/20)
       }
     },
-  },
-  methods:{
     resetHighestInfo(){
       this.highestInfo = null;
       this.highestInfo = {
@@ -324,6 +326,7 @@ export default {
           match.started_date = this.generateStartedTime(match.start_time);
           match.game_mode = this.generateGameMode(match.game_mode);
           match.lane_name = this.generateLaneName(match.lane_role);
+          
        });
        return matches;
     },
@@ -396,7 +399,7 @@ export default {
 
           this.dispatchRecentMatchesData(this.recentMatches);
 
-
+          this.getAverageandHighestInfo();
 
           this.fullscreenLoading = false;
         }));
