@@ -23,6 +23,8 @@ Vue.use(VueLazyload)
 Vue.use(Vuex)
 Vue.use(ElementUI, { locale })
 
+
+
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 

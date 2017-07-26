@@ -1,6 +1,5 @@
 <template>
-  <div>
-  <div v-loading.body.lock="fullscreenLoading" v-if='fullscreenLoading' style="height:100%"></div>  
+  <div >
   <div class="component-container" v-if="playerAccount && playerWL && recentMatches">
     <el-row>
       <el-col :span="4">
@@ -93,7 +92,7 @@ import Overview from './Overview'
 import Totals from './Totals'
 import Heroes from './Heroes'
 import Peers from './Peers'
-
+import { Loading } from 'element-ui';
 export default {
   name: 'PlayerProfile',
   components:{
@@ -103,7 +102,11 @@ export default {
     'Peers':Peers
   },
   created(){
+
     this.getPlayerProfile();
+  },
+  mounted(){
+    console.log('mounted called');
   },
   watch:{
     '$route':'getPlayerProfile'
@@ -386,6 +389,7 @@ export default {
       return name ? name : this.laneName[0];
     },
     getPlayerProfile(){
+      let loadingInstance = Loading.service({ fullscreen: true });
       this.dispatchPlayerId(this.accountId);
       this.$axios.all([this.getPlayerAccount(), this.getPlayerWinLose(),
        this.getRecentMatches()]).then(this.$axios.spread(
@@ -400,8 +404,7 @@ export default {
           this.dispatchRecentMatchesData(this.recentMatches);
 
           this.getAverageandHighestInfo();
-
-          this.fullscreenLoading = false;
+          loadingInstance.close();
         }));
     },
     dispatchRecentMatchesData(data){

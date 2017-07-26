@@ -24,11 +24,11 @@
         width="250"
        >
         <template scope="scope">
-          <div class="wrapper" style=" display: flex;
-    align-items: center;">
+          <div class="wrapper peer-icon-wrapper" style=" display: flex;
+    align-items: center;" >
              <img v-lazy="scope.row.avatar" alt="" style="height:29px; box-shadow: 0 0 5px rgba(0, 0, 0, .4);
     margin-left:0 auto;" >
-    <a  @click.prevent="viewUser(scope.row.account_id)" style="margin-left: 10px; color:#6BF; text-decoration:none"> {{ scope.row.personaname }}</a>
+    <a  class="peer-name-wrapper" @click.prevent="viewUser(scope.row.account_id)" style="margin-left: 10px; color:#6BF; text-decoration:none"> {{ scope.row.personaname }}</a>
           </div>
         </template>
       </el-table-column>
@@ -183,5 +183,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  
+  .peer-name-wrapper:hover{
+    cursor: pointer
+  }
 </style>
